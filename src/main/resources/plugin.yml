@@ -1,0 +1,9 @@
+name: xRay
+version: 1.0
+main: me.kyllian.xRay.XRayPlugin
+description: A legit xRay
+depends: [ProtocolLib]
+
+commands:
+  xray:
+    usage: /<command>
