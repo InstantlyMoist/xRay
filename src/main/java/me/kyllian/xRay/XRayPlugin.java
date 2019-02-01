@@ -26,6 +26,11 @@ public class XRayPlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+			Bukkit.getLogger().warning("xRay has been disabled, please download Protocollib!");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 		Metrics metrics = new Metrics(this);
 
 		getCommand("xray").setExecutor(new CMD_xRay(this));

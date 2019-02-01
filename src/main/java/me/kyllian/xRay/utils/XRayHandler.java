@@ -7,10 +7,7 @@ import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import me.kyllian.xRay.XRayPlugin;
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -62,7 +59,8 @@ public class XRayHandler {
 
                         Location location = chunk.getBlock(x, y, z).getLocation();
                         if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
-                            change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType()));
+                            if (Bukkit.getServer().getVersion().contains("1.13")) new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
+                            else change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType()));
                         } else {
                             change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
                         }
