@@ -60,7 +60,11 @@ public class XRayHandler {
                         Location location = chunk.getBlock(x, y, z).getLocation();
                         if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
                             if (Bukkit.getServer().getVersion().contains("1.13")) new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
-                            else change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType()));
+                            else change[i++] = new MultiBlockChangeInfo(
+                                    location,
+                                    WrappedBlockData.
+                                            createData(
+                                                    location.getBlock().getType()));
                         } else {
                             change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
                         }
