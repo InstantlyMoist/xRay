@@ -13,6 +13,7 @@ public class PlayerData {
     public List<Chunk> chunkList;
     public boolean xray = false;
     public GameMode gameMode;
+    public ChunkTask task;
 
     public PlayerData(UUID uuid) {
         this.uuid = uuid;

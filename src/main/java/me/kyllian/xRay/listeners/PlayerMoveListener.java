@@ -2,6 +2,7 @@ package me.kyllian.xRay.listeners;
 
 import me.kyllian.xRay.XRayPlugin;
 import me.kyllian.xRay.utils.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,8 @@ public class PlayerMoveListener implements Listener {
         PlayerData data = plugin.getPlayerData(player.getUniqueId());
         if (data.xray) {
             if (event.getFrom().getChunk() != event.getTo().getChunk()) {
+                data.task.cancel();
+                data.task = null;
                 plugin.getxRayHandler().send(player);
             }
         }
