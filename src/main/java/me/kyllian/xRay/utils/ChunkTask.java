@@ -42,6 +42,7 @@ public class ChunkTask extends BukkitRunnable {
                 for (int y = 0; y <= 255; y++) {
                     for (int z = 0; z <= 15; z++) {
                         if (isCancelled()) return;
+                        plugin.blocksXrayed++;
                         Location location = chunk.getBlock(x, y, z).getLocation();
                         if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
                             if (Bukkit.getServer().getVersion().contains("1.13")) change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
