@@ -60,9 +60,8 @@ public class CMD_xRay implements CommandExecutor {
                     return true;
                 }
             }
-            sender.sendMessage(plugin.getMessageHandler().getUnknownArgumentMessage());
-            return true;
         }
+        sender.sendMessage(plugin.getMessageHandler().getUnknownArgumentMessage());
         return true;
     }
 }
