@@ -1,16 +1,11 @@
 package me.kyllian.xRay.commands;
 
-import java.util.ArrayList;
-
 import me.kyllian.xRay.XRayPlugin;
 import me.kyllian.xRay.utils.PlayerData;
-import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.kyllian.xRay.utils.ColorTranslate;
 
 public class CMD_xRay implements CommandExecutor {
 
@@ -29,8 +24,8 @@ public class CMD_xRay implements CommandExecutor {
                 }
                 Player player = (Player) sender;
                 if (player.hasPermission("xray.toggle")) {
-                    PlayerData data = plugin.getPlayerData(player.getUniqueId());
-                    if (data.xray) {
+                    PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
+                    if (playerData.isXray()) {
                         player.sendMessage(plugin.getMessageHandler().getDisabledxRayMessage());
                         plugin.getxRayHandler().restoreAll(player);
                         return true;
@@ -44,15 +39,15 @@ public class CMD_xRay implements CommandExecutor {
             }
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("help")) {
-                    sender.sendMessage(ColorTranslate.cc("&8&oxRay: &7Welcome to xRay"));
+                    sender.sendMessage(plugin.getMessageHandler().colorTranslate("&8&oxRay: &7Welcome to xRay"));
                     sender.sendMessage("");
-                    sender.sendMessage(ColorTranslate.cc("&7/xray (help/reload)"));
+                    sender.sendMessage(plugin.getMessageHandler().colorTranslate("&7/xray (help/reload)"));
                     return true;
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
                     if (sender.hasPermission("xray.reload")) {
                         plugin.reloadConfig();
-                        plugin.blocks = (ArrayList<String>) plugin.getConfig().getStringList("Settings.xRayBlocks");
+                        plugin.blocks = plugin.getConfig().getStringList("Settings.xRayBlocks");
                         sender.sendMessage(plugin.getMessageHandler().getReloadedMessage());
                         return true;
                     }

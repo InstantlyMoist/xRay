@@ -1,6 +1,8 @@
-package me.kyllian.xRay.utils;
+package me.kyllian.xRay.handlers;
 
 import me.kyllian.xRay.XRayPlugin;
+import me.kyllian.xRay.utils.ChunkTask;
+import me.kyllian.xRay.utils.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -33,7 +35,7 @@ public class XRayHandler {
         Location loc = player.getLocation();
         int beforerange = plugin.getConfig().getInt("Settings.Range");
         int range = (beforerange / 2) * 2 == beforerange ? beforerange : beforerange + 1;
-        PlayerData data = plugin.getPlayerData(player.getUniqueId());
+        PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
         int xmin = loc.getChunk().getX() - range;
         int xmax = loc.getChunk().getX() + range;
         int zmin = loc.getChunk().getZ() - range;
@@ -46,24 +48,24 @@ public class XRayHandler {
             }
         }
 
-        data.task = new ChunkTask(plugin, player, getxRay(data.chunkList, (ArrayList<Chunk>) currentChunks.clone()));
-        getRestore(data.chunkList, (ArrayList<Chunk>) currentChunks.clone()).forEach(chunk -> restore(player, chunk));
-        data.chunkList.clear();
+        playerData.setTask(new ChunkTask(plugin, player, getxRay(playerData.getChunkList(), (ArrayList<Chunk>) currentChunks.clone())));
+        getRestore(playerData.getChunkList(), (ArrayList<Chunk>) currentChunks.clone()).forEach(chunk -> restore(player, chunk));
+        playerData.getChunkList().clear();
         for (int x = xmin; x < xmax; x++) {
             for (int z = zmin; z < zmax; z++) {
-                data.chunkList.add(loc.getWorld().getChunkAt(x, z));
+                playerData.getChunkList().add(loc.getWorld().getChunkAt(x, z));
             }
         }
     }
 
 
     public void firstPrepare(Player player) {
-        PlayerData data = plugin.getPlayerData(player.getUniqueId());
+        PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
         if (plugin.getConfig().getBoolean("Settings.SpectatorGamemode")) {
-            data.gameMode = player.getGameMode();
+            playerData.setGameMode(player.getGameMode());
             player.setGameMode(GameMode.SPECTATOR);
         }
-        data.xray = true;
+        playerData.setXray(true);
         send(player);
     }
 
@@ -72,10 +74,10 @@ public class XRayHandler {
     }
 
     public void restoreAll(Player player) {
-        PlayerData data = plugin.getPlayerData(player.getUniqueId());
-        if (plugin.getConfig().getBoolean("Settings.SpectatorGamemode")) player.setGameMode(data.gameMode);
-        data.chunkList.forEach(chunk -> restore(player, chunk));
-        data.chunkList.clear();
-        data.xray = false;
+        PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
+        if (plugin.getConfig().getBoolean("Settings.SpectatorGamemode")) player.setGameMode(playerData.getGameMode());
+        playerData.getChunkList().forEach(chunk -> restore(player, chunk));
+        playerData.getChunkList().clear();
+        playerData.setXray(false);
     }
 }

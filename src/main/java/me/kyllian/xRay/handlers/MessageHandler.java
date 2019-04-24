@@ -1,4 +1,4 @@
-package me.kyllian.xRay.utils;
+package me.kyllian.xRay.handlers;
 
 import me.kyllian.xRay.XRayPlugin;
 import org.bukkit.ChatColor;

@@ -1,15 +1,13 @@
 package me.kyllian.xRay;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 
+import me.kyllian.xRay.handlers.PlayerHandler;
 import me.kyllian.xRay.listeners.PlayerMoveListener;
-import me.kyllian.xRay.utils.MessageHandler;
+import me.kyllian.xRay.handlers.MessageHandler;
 import me.kyllian.xRay.utils.PlayerData;
-import me.kyllian.xRay.utils.XRayHandler;
+import me.kyllian.xRay.handlers.XRayHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,11 +17,11 @@ import me.kyllian.xRay.listeners.PlayerQuitListener;
 
 public class XRayPlugin extends JavaPlugin {
 
-    private XRayHandler xRayHandler;
+    private PlayerHandler playerHandler;
     private MessageHandler messageHandler;
+    private XRayHandler xRayHandler;
 
     public List<String> blocks;
-    public HashMap<UUID, PlayerData> playerData;
 
     public int blocksXrayed = 0;
 
@@ -43,44 +41,46 @@ public class XRayPlugin extends JavaPlugin {
             }
         }));
 
-
-                getCommand("xray").setExecutor(new CMD_xRay(this));
-
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this), this);
+        getCommand("xray").setExecutor(new CMD_xRay(this));
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
         blocks = new ArrayList<>(getConfig().getStringList("Settings.xRayBlocks"));
-        xRayHandler = new XRayHandler(this);
-        playerData = new HashMap<>();
+
+        initializeHandlers();
+        initializeListeners();
+    }
+
+    public void initializeHandlers() {
         messageHandler = new MessageHandler(this);
+        playerHandler = new PlayerHandler(this);
+        xRayHandler = new XRayHandler(this);
+
+    }
+
+    public void initializeListeners() {
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this), this);
     }
 
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerData data = getPlayerData(player.getUniqueId());
-            if (data.xray) {
-
-                xRayHandler.restoreAll(player);
-            }
+            PlayerData playerData = playerHandler.getPlayerData(player);
+            if (playerData.isXray()) xRayHandler.restoreAll(player);
         });
+    }
+
+    public MessageHandler getMessageHandler() {
+        return messageHandler;
+    }
+
+    public PlayerHandler getPlayerHandler() {
+        return playerHandler;
     }
 
     public XRayHandler getxRayHandler() {
         return xRayHandler;
     }
 
-    public PlayerData getPlayerData(UUID uuid) {
-        return playerData.computeIfAbsent(uuid, f -> new PlayerData(uuid));
-    }
-
-    public void removePlayerData(UUID uuid) {
-        playerData.remove(uuid);
-    }
-
-    public MessageHandler getMessageHandler() {
-        return messageHandler;
-    }
 }

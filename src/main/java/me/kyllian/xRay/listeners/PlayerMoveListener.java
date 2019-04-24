@@ -19,11 +19,11 @@ public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        PlayerData data = plugin.getPlayerData(player.getUniqueId());
-        if (data.xray) {
-            if (event.getFrom().getChunk() != event.getTo().getChunk()) {
-                data.task.cancel();
-                data.task = null;
+        PlayerData data = plugin.getPlayerHandler().getPlayerData(player);
+        if (data.isXray()) {
+            if (!event.getFrom().getChunk().equals(event.getTo().getChunk())) {
+                data.getTask().cancel();
+                data.setTask(null);
                 plugin.getxRayHandler().send(player);
             }
         }

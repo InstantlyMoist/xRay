@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ChunkTask extends BukkitRunnable {
@@ -25,7 +26,7 @@ public class ChunkTask extends BukkitRunnable {
     public ChunkTask(XRayPlugin plugin, Player player, List<Chunk> chunkList) {
         this.plugin = plugin;
         this.player = player;
-        this.chunkList = chunkList;
+        this.chunkList = Collections.synchronizedList(chunkList);
 
         runTaskAsynchronously(plugin);
     }
