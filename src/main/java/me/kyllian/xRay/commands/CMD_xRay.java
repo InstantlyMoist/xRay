@@ -16,7 +16,6 @@ public class CMD_xRay implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        if (command.getName().equalsIgnoreCase("xray")) {
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage(plugin.getMessageHandler().getNotAPlayerMessage());
@@ -55,7 +54,6 @@ public class CMD_xRay implements CommandExecutor {
                     return true;
                 }
             }
-        }
         sender.sendMessage(plugin.getMessageHandler().getUnknownArgumentMessage());
         return true;
     }

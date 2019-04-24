@@ -46,7 +46,7 @@ public class XRayPlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
-        blocks = new ArrayList<>(getConfig().getStringList("Settings.xRayBlocks"));
+        blocks = getConfig().getStringList("Settings.xRayBlocks");
 
         initializeHandlers();
         initializeListeners();
@@ -64,7 +64,9 @@ public class XRayPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this), this);
     }
 
+    @Override
     public void onDisable() {
+        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).isXray()).forEach(xRayHandler::restoreAll);
         Bukkit.getOnlinePlayers().forEach(player -> {
             PlayerData playerData = playerHandler.getPlayerData(player);
             if (playerData.isXray()) xRayHandler.restoreAll(player);

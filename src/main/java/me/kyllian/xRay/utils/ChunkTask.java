@@ -14,8 +14,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ChunkTask extends BukkitRunnable {
 
@@ -31,10 +33,9 @@ public class ChunkTask extends BukkitRunnable {
         runTaskAsynchronously(plugin);
     }
 
+    @Override
     public void run() {
-        if (isCancelled()) return;
-        chunkList.forEach(chunk -> {
-            if (chunk == null) return;
+        chunkList.stream().filter(Objects::nonNull).forEach(chunk -> {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
             ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
             MultiBlockChangeInfo[] change = new MultiBlockChangeInfo[65536];
@@ -46,8 +47,10 @@ public class ChunkTask extends BukkitRunnable {
                         plugin.blocksXrayed++;
                         Location location = chunk.getBlock(x, y, z).getLocation();
                         if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
-                            if (Bukkit.getServer().getVersion().contains("1.13")) change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
-                            else change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType(), location.getBlock().getData()));
+                            if (Bukkit.getServer().getVersion().contains("1.13"))
+                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
+                            else
+                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType(), location.getBlock().getData()));
                         } else {
                             change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
                         }
@@ -58,8 +61,8 @@ public class ChunkTask extends BukkitRunnable {
             packet.getMultiBlockChangeInfoArrays().write(0, change);
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (Exception exc) {
-                System.out.println("Something went wrong while creating the xRay vision!");
+            } catch (InvocationTargetException exception) {
+                exception.printStackTrace();
             }
         });
     }
