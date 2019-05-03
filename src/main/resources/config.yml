@@ -12,7 +12,6 @@ Messages:
   Reloaded: '&8&oxRay: &7Reloaded the plugin!'
 
 Settings:
-  SpectatorGamemode: false
   UpdateDelay: 5
   # How long should the plugin wait to update the xRay vision? (In seconds)
   xRayBlocks:
@@ -26,5 +25,6 @@ Settings:
       - 'STATIONARY_WATER'
       - 'STATIONARY_LAVA'
       - 'BEDROCK'
-  Range: 1
+  Mode: CHUNK # CHUNK / BLOCK
+  Range: 3
   # Range of the xRay (In chunks)

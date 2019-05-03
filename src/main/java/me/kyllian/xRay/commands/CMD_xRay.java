@@ -24,13 +24,15 @@ public class CMD_xRay implements CommandExecutor {
                 Player player = (Player) sender;
                 if (player.hasPermission("xray.toggle")) {
                     PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
-                    if (playerData.isXray()) {
+                    if (playerData.inXray()) {
                         player.sendMessage(plugin.getMessageHandler().getDisabledxRayMessage());
                         plugin.getxRayHandler().restoreAll(player);
+                        playerData.setTask(null);
+                        playerData.setList(null);
                         return true;
                     }
                     player.sendMessage(plugin.getMessageHandler().getEnabledxRayMessage());
-                    plugin.getxRayHandler().firstPrepare(player);
+                    plugin.getxRayHandler().send(player);
                     return true;
                 }
                 player.sendMessage(plugin.getMessageHandler().getNoPermissionMessage());

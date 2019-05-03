@@ -1,5 +1,6 @@
 package me.kyllian.xRay.utils;
 
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -12,25 +13,45 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ChunkTask extends BukkitRunnable {
+public class ChunkTask extends Task {
 
     private XRayPlugin plugin;
     private Player player;
+    private PlayerData playerData;
     private List<Chunk> chunkList;
 
-    public ChunkTask(XRayPlugin plugin, Player player, List<Chunk> chunkList) {
+    public ChunkTask(XRayPlugin plugin, Player player) {
+        super(TaskType.CHUNK);
+
         this.plugin = plugin;
         this.player = player;
-        this.chunkList = Collections.synchronizedList(chunkList);
+        this.playerData = plugin.getPlayerHandler().getPlayerData(player);
+
+        chunkList = new ArrayList<>();
+
+        update();
 
         runTaskAsynchronously(plugin);
+    }
+
+    @Override
+    public void update() {
+        updateNewChunks();
+        playerData.setList(chunkList);
+    }
+
+    @Override
+    public void restore() {
+        if (playerData.getList() == null) return;
+        calculateRestore(chunkList, (List<Chunk>) playerData.getList()).stream().forEach(chunk -> {
+            player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+        });
     }
 
     @Override
@@ -65,5 +86,23 @@ public class ChunkTask extends BukkitRunnable {
                 exception.printStackTrace();
             }
         });
+    }
+
+    public void updateNewChunks() {
+        final Location location = player.getLocation();
+        int beforeRange = plugin.getConfig().getInt("Settings.Range");
+        int finalRange = (beforeRange / 2) * 2 == beforeRange ? beforeRange : beforeRange + 1;
+        for (int x = location.getChunk().getX() - finalRange; x < location.getChunk().getX() + finalRange + 1; x++) {
+            for (int z = location.getChunk().getZ() - finalRange; z < location.getChunk().getZ() + finalRange + 1; z++) {
+                chunkList.add(location.getWorld().getChunkAt(x, z));
+            }
+        }
+        restore();
+    }
+
+
+    public List<Chunk> calculateRestore(List<Chunk> newList, List<Chunk> oldList) {
+        oldList.removeAll(newList);
+        return oldList;
     }
 }

@@ -6,7 +6,6 @@ import java.util.concurrent.Callable;
 import me.kyllian.xRay.handlers.PlayerHandler;
 import me.kyllian.xRay.listeners.PlayerMoveListener;
 import me.kyllian.xRay.handlers.MessageHandler;
-import me.kyllian.xRay.utils.PlayerData;
 import me.kyllian.xRay.handlers.XRayHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -66,11 +65,7 @@ public class XRayPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).isXray()).forEach(xRayHandler::restoreAll);
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerData playerData = playerHandler.getPlayerData(player);
-            if (playerData.isXray()) xRayHandler.restoreAll(player);
-        });
+        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).inXray()).forEach(xRayHandler::restoreAll);
     }
 
     public MessageHandler getMessageHandler() {
