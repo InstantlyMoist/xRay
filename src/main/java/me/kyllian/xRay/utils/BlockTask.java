@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,12 +59,15 @@ public class BlockTask extends Task {
 
     @Override
     public void run() {
-        blockList.stream().filter(Objects::nonNull).forEach(block -> {
+        Iterator iterator = blockList.iterator();
+        while (iterator.hasNext()) {
+            if (isCancelled()) return;
+            Block block = (Block) iterator.next();
             if (!plugin.blocks.contains(block.getType().toString()) && block.getType() != Material.AIR) {
                 player.sendBlockChange(block.getLocation(), Material.BARRIER, (byte) 1);
                 plugin.blocksXrayed++;
             }
-        });
+        }
     }
 
     public void updateNewBlocks() {

@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,7 +57,11 @@ public class ChunkTask extends Task {
 
     @Override
     public void run() {
-        chunkList.stream().filter(Objects::nonNull).forEach(chunk -> {
+        if (isCancelled()) return;
+        Iterator iterator = chunkList.iterator();
+        while (iterator.hasNext()) {
+            if (isCancelled()) return;
+            Chunk chunk = (Chunk) iterator.next();
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
             ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
             MultiBlockChangeInfo[] change = new MultiBlockChangeInfo[65536];
@@ -85,7 +90,7 @@ public class ChunkTask extends Task {
             } catch (InvocationTargetException exception) {
                 exception.printStackTrace();
             }
-        });
+        }
     }
 
     public void updateNewChunks() {
