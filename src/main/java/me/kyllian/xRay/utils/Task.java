@@ -11,8 +11,6 @@ public abstract class Task extends BukkitRunnable {
         this.taskType = taskType;
     }
 
-    public abstract void update();
-
     public abstract void restore();
 
     @Override
@@ -26,9 +24,5 @@ public abstract class Task extends BukkitRunnable {
 
     public TaskType getTaskType() {
         return taskType;
-    }
-
-    public enum TaskType {
-        BLOCK, CHUNK
     }
 }

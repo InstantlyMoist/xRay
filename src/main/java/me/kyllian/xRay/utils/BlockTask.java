@@ -1,26 +1,14 @@
 package me.kyllian.xRay.utils;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
-import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
 import me.kyllian.xRay.XRayPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class BlockTask extends Task {
 
@@ -38,15 +26,7 @@ public class BlockTask extends Task {
 
         blockList = new ArrayList<>();
 
-        update();
-
         runTaskAsynchronously(plugin);
-    }
-
-    @Override
-    public void update() {
-        updateNewBlocks();
-        playerData.setList(blockList);
     }
 
     @Override
@@ -59,6 +39,8 @@ public class BlockTask extends Task {
 
     @Override
     public void run() {
+        updateNewBlocks();
+        playerData.setList(blockList);
         Iterator iterator = blockList.iterator();
         while (iterator.hasNext()) {
             if (isCancelled()) return;

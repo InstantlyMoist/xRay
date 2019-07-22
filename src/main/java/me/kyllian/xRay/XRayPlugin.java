@@ -9,6 +9,7 @@ import me.kyllian.xRay.handlers.MessageHandler;
 import me.kyllian.xRay.handlers.XRayHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.kyllian.xRay.commands.CMD_xRay;
@@ -31,6 +32,7 @@ public class XRayPlugin extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
         Metrics metrics = new Metrics(this);
 
         metrics.addCustomChart(new Metrics.SingleLineChart("blocks_xrayed", new Callable<Integer>() {

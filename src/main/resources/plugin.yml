@@ -1,5 +1,5 @@
 name: xRay
-version: 2.01
+version: 2.03
 main: me.kyllian.xRay.XRayPlugin
 description: A legit xRay
 depends: [ProtocolLib]

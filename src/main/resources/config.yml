@@ -25,6 +25,6 @@ Settings:
       - 'STATIONARY_WATER'
       - 'STATIONARY_LAVA'
       - 'BEDROCK'
-  Mode: CHUNK # CHUNK / BLOCK
+  Mode: BLOCK # CHUNK / BLOCK
   Range: 3
   # Range of the xRay (In chunks)

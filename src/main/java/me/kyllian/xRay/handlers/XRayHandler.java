@@ -3,7 +3,7 @@ import me.kyllian.xRay.XRayPlugin;
 import me.kyllian.xRay.utils.BlockTask;
 import me.kyllian.xRay.utils.ChunkTask;
 import me.kyllian.xRay.utils.PlayerData;
-import me.kyllian.xRay.utils.Task;
+import me.kyllian.xRay.utils.TaskType;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ public class XRayHandler {
 
     public void send(Player player) {
         PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
-        playerData.setTask(Task.TaskType.valueOf(plugin.getConfig().getString("Settings.Mode")) == Task.TaskType.CHUNK ? new ChunkTask(plugin, player) : new BlockTask(plugin, player));
+        playerData.setTask(TaskType.valueOf(plugin.getConfig().getString("Settings.Mode")) == TaskType.CHUNK ? new ChunkTask(plugin, player) : new BlockTask(plugin, player));
     }
 
     public void restoreAll(Player player) {

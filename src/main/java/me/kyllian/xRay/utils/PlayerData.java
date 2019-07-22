@@ -1,7 +1,5 @@
 package me.kyllian.xRay.utils;
 
-import org.bukkit.GameMode;
-
 import java.util.UUID;
 
 public class PlayerData {

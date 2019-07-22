@@ -13,6 +13,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -36,61 +37,67 @@ public class ChunkTask extends Task {
 
         chunkList = new ArrayList<>();
 
-        update();
-
         runTaskAsynchronously(plugin);
-    }
-
-    @Override
-    public void update() {
-        updateNewChunks();
-        playerData.setList(chunkList);
     }
 
     @Override
     public void restore() {
         if (playerData.getList() == null) return;
         calculateRestore(chunkList, (List<Chunk>) playerData.getList()).stream().forEach(chunk -> {
-            player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+            new BukkitRunnable() {
+                public void run() {
+                    player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+                }
+            }.runTask(plugin);
         });
     }
 
     @Override
     public void run() {
+        updateNewChunks();
+        playerData.setList(chunkList);
         if (isCancelled()) return;
         Iterator iterator = chunkList.iterator();
         while (iterator.hasNext()) {
             if (isCancelled()) return;
             Chunk chunk = (Chunk) iterator.next();
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
-            ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
-            MultiBlockChangeInfo[] change = new MultiBlockChangeInfo[65536];
-            int i = 0;
-            for (int x = 0; x <= 15; x++) {
-                for (int y = 0; y <= 255; y++) {
-                    for (int z = 0; z <= 15; z++) {
-                        if (isCancelled()) return;
-                        plugin.blocksXrayed++;
-                        Location location = chunk.getBlock(x, y, z).getLocation();
-                        if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
-                            if (Bukkit.getServer().getVersion().contains("1.13"))
-                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
-                            else
-                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType(), location.getBlock().getData()));
-                        } else {
-                            change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
+            updateChunkAsync(chunk);
+        }
+    }
+
+    public void updateChunkAsync(Chunk chunk) { ;
+        new BukkitRunnable() {
+            public void run() {
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
+                ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
+                MultiBlockChangeInfo[] change = new MultiBlockChangeInfo[65536];
+                int i = 0;
+                for (int x = 0; x <= 15; x++) {
+                    for (int y = 0; y <= 255; y++) {
+                        for (int z = 0; z <= 15; z++) {
+                            if (isCancelled()) return;
+                            plugin.blocksXrayed++;
+                            Location location = chunk.getBlock(x, y, z).getLocation();
+                            if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
+                                if (Bukkit.getServer().getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14"))
+                                    change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getBlockData()));
+                                else
+                                    change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType(), location.getBlock().getData()));
+                            } else {
+                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
+                            }
                         }
                     }
                 }
+                packet.getChunkCoordIntPairs().write(0, chunkCoords);
+                packet.getMultiBlockChangeInfoArrays().write(0, change);
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                } catch (InvocationTargetException exception) {
+                    exception.printStackTrace();
+                }
             }
-            packet.getChunkCoordIntPairs().write(0, chunkCoords);
-            packet.getMultiBlockChangeInfoArrays().write(0, change);
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (InvocationTargetException exception) {
-                exception.printStackTrace();
-            }
-        }
+        }.runTaskAsynchronously(plugin);
     }
 
     public void updateNewChunks() {
