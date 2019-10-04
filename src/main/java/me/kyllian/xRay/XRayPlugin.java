@@ -21,7 +21,7 @@ public class XRayPlugin extends JavaPlugin {
     private MessageHandler messageHandler;
     private XRayHandler xRayHandler;
 
-    public List<String> blocks;
+    public HashSet<String> blocks;
 
     public int blocksXrayed = 0;
 
@@ -47,7 +47,7 @@ public class XRayPlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
-        blocks = getConfig().getStringList("Settings.xRayBlocks");
+        blocks = new HashSet<>(getConfig().getStringList("Settings.xRayBlocks"));
 
         initializeHandlers();
         initializeListeners();
@@ -81,5 +81,7 @@ public class XRayPlugin extends JavaPlugin {
     public XRayHandler getxRayHandler() {
         return xRayHandler;
     }
+
+
 
 }

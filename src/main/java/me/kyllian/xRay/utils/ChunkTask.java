@@ -26,7 +26,10 @@ public class ChunkTask extends Task {
     private XRayPlugin plugin;
     private Player player;
     private PlayerData playerData;
-    private List<Chunk> chunkList;
+    private ArrayList<Chunk> chunkList;
+    private ArrayList<Chunk> currentUsed;
+
+    private WrappedBlockData barrierBlock;
 
     public ChunkTask(XRayPlugin plugin, Player player) {
         super(TaskType.CHUNK);
@@ -36,6 +39,9 @@ public class ChunkTask extends Task {
         this.playerData = plugin.getPlayerHandler().getPlayerData(player);
 
         chunkList = new ArrayList<>();
+        currentUsed = new ArrayList<>();
+
+        barrierBlock = WrappedBlockData.createData(Material.BARRIER);
 
         runTaskAsynchronously(plugin);
     }
@@ -57,15 +63,15 @@ public class ChunkTask extends Task {
         updateNewChunks();
         playerData.setList(chunkList);
         if (isCancelled()) return;
-        Iterator iterator = chunkList.iterator();
-        while (iterator.hasNext()) {
-            if (isCancelled()) return;
-            Chunk chunk = (Chunk) iterator.next();
-            updateChunkAsync(chunk);
-        }
+        currentUsed = (ArrayList<Chunk>) chunkList.clone();
+        updateChunkAsync(currentUsed.get(0));
     }
 
-    public void updateChunkAsync(Chunk chunk) { ;
+    public void sendNext() {
+        if (!currentUsed.isEmpty()) updateChunkAsync(currentUsed.get(0));
+    }
+
+    public void updateChunkAsync(Chunk chunk) {
         new BukkitRunnable() {
             public void run() {
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
@@ -76,7 +82,6 @@ public class ChunkTask extends Task {
                     for (int y = 0; y <= 255; y++) {
                         for (int z = 0; z <= 15; z++) {
                             if (isCancelled()) return;
-                            plugin.blocksXrayed++;
                             Location location = chunk.getBlock(x, y, z).getLocation();
                             if (plugin.blocks.contains(location.getBlock().getType().toString()) || location.getBlock().getType() == Material.AIR) {
                                 if (Bukkit.getServer().getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14"))
@@ -84,7 +89,7 @@ public class ChunkTask extends Task {
                                 else
                                     change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(location.getBlock().getType(), location.getBlock().getData()));
                             } else {
-                                change[i++] = new MultiBlockChangeInfo(location, WrappedBlockData.createData(Material.BARRIER));
+                                change[i++] = new MultiBlockChangeInfo(location, barrierBlock);
                             }
                         }
                     }
@@ -96,6 +101,9 @@ public class ChunkTask extends Task {
                 } catch (InvocationTargetException exception) {
                     exception.printStackTrace();
                 }
+                currentUsed.remove(chunk);
+                sendNext();
+                plugin.blocksXrayed += 65536;
             }
         }.runTaskAsynchronously(plugin);
     }

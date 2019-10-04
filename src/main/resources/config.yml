@@ -10,6 +10,11 @@ Messages:
   DisabledxRay: '&8&oxRay: &7Disabled xRay vision'
   EnabledxRay: '&8&oxRay: &7Enabled xRay vision'
   Reloaded: '&8&oxRay: &7Reloaded the plugin!'
+  AddedBlock: '&8&oxRay: &7Added block!'
+  RemovedBlock: '&8&oxRay: &7Removed block!'
+  UnknownBlock: '&8&oxRay: &7The block you specified is unknown!'
+  AlreadyAdded: '&8&oxRay: &7This block is already affected by the xRay vision'
+  DoesntExist: '&8&oxRay: &7This block is not affected by the xRay vision'
 
 Settings:
   UpdateDelay: 5
@@ -25,6 +30,6 @@ Settings:
       - 'STATIONARY_WATER'
       - 'STATIONARY_LAVA'
       - 'BEDROCK'
-  Mode: BLOCK # CHUNK / BLOCK
+  Mode: CHUNK # CHUNK / BLOCK
   Range: 3
   # Range of the xRay (In chunks)

@@ -38,4 +38,24 @@ public class MessageHandler {
     public String getReloadedMessage() {
         return colorTranslate(plugin.getConfig().getString("Messages.Reloaded"));
     }
+
+    public String getAddedBlockMessage() {
+        return colorTranslate(plugin.getConfig().getString("Messages.AddedBlock"));
+    }
+
+    public String getRemovedBlockMessage() {
+        return colorTranslate(plugin.getConfig().getString("Messages.RemovedBlock"));
+    }
+
+    public String getUnknownBlockMessage() {
+        return colorTranslate(plugin.getConfig().getString("Messages.UnknownBlock"));
+    }
+
+    public String getAlreadyAddedMessage() {
+        return colorTranslate(plugin.getConfig().getString("Messages.AlreadyAdded"));
+    }
+
+    public String getDoesntExistMessage() {
+        return colorTranslate(plugin.getConfig().getString("Messages.DoesntExist"));
+    }
 }
