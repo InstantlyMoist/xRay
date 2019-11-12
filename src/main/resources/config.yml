@@ -5,7 +5,7 @@
 
 Messages:
   NotAPlayer: '&8&oxRay: &7You need to be a player to execute this command!'
-  NoPermission: '&&8&oxRay: &7You dont have permissions to execute this command'
+  NoPermission: '&8&oxRay: &7You dont have permissions to execute this command'
   UnknownArgument: '&8&oxRay: &7The argument you specified seems to be incorrect!'
   DisabledxRay: '&8&oxRay: &7Disabled xRay vision'
   EnabledxRay: '&8&oxRay: &7Enabled xRay vision'
