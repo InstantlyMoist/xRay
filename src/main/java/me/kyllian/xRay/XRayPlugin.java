@@ -3,12 +3,15 @@ package me.kyllian.xRay;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.google.common.collect.ImmutableMap;
 import me.kyllian.xRay.handlers.PlayerHandler;
 import me.kyllian.xRay.listeners.PlayerMoveListener;
 import me.kyllian.xRay.handlers.MessageHandler;
 import me.kyllian.xRay.handlers.XRayHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,9 +24,7 @@ public class XRayPlugin extends JavaPlugin {
     private MessageHandler messageHandler;
     private XRayHandler xRayHandler;
 
-    public HashSet<String> blocks;
-
-    public int blocksXrayed = 0;
+    private Map<String, WrappedBlockData> data;
 
     @Override
     public void onEnable() {
@@ -35,22 +36,16 @@ public class XRayPlugin extends JavaPlugin {
 
         Metrics metrics = new Metrics(this);
 
-        metrics.addCustomChart(new Metrics.SingleLineChart("blocks_xrayed", new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return blocksXrayed;
-            }
-        }));
-
         getCommand("xray").setExecutor(new CMD_xRay(this));
-
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
-
-        blocks = new HashSet<>(getConfig().getStringList("Settings.xRayBlocks"));
 
         initializeHandlers();
         initializeListeners();
+        initializeConfig();
+    }
+
+    @Override
+    public void onDisable() {
+        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).inXray()).forEach(xRayHandler::restore);
     }
 
     public void initializeHandlers() {
@@ -65,9 +60,20 @@ public class XRayPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this), this);
     }
 
-    @Override
-    public void onDisable() {
-        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).inXray()).forEach(xRayHandler::restoreAll);
+    public void initializeConfig() {
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
+
+
+        HashMap<String, WrappedBlockData> tempData = new HashMap<>();
+        for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
+            tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
+        }
+        data = Collections.unmodifiableMap(tempData);
+    }
+
+    public Map<String, WrappedBlockData> getData() {
+        return data;
     }
 
     public MessageHandler getMessageHandler() {
@@ -81,7 +87,5 @@ public class XRayPlugin extends JavaPlugin {
     public XRayHandler getxRayHandler() {
         return xRayHandler;
     }
-
-
 
 }

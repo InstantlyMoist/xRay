@@ -20,16 +20,15 @@ Settings:
   UpdateDelay: 5
   # How long should the plugin wait to update the xRay vision? (In seconds)
   xRayBlocks:
+      - 'AIR' # DO NOT REMOVE
       - 'COAL_ORE'
       - 'IRON_ORE'
       - 'GOLD_ORE'
       - 'DIAMOND_ORE'
-      - 'WOOD'
+      - 'OAK_WOOD'
       - 'WATER'
       - 'LAVA'
-      - 'STATIONARY_WATER'
-      - 'STATIONARY_LAVA'
       - 'BEDROCK'
   Mode: CHUNK # CHUNK / BLOCK
-  Range: 3
+  Range: 1
   # Range of the xRay (In chunks)
