@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class CMD_xRay implements CommandExecutor {
@@ -74,7 +76,9 @@ public class CMD_xRay implements CommandExecutor {
                         sender.sendMessage(plugin.getMessageHandler().getAlreadyAddedMessage());
                         return true;
                     }
-                    plugin.getConfig().set("Settings.xRayBlocks", plugin.getData().keySet());
+                    ArrayList<String> blocks = new ArrayList<>(plugin.getData().keySet());
+                    blocks.add(materialName);
+                    plugin.getConfig().set("Settings.xRayBlocks", blocks);
                     plugin.saveConfig();
                     plugin.initializeConfig();
                     sender.sendMessage(plugin.getMessageHandler().getAddedBlockMessage());
@@ -94,7 +98,9 @@ public class CMD_xRay implements CommandExecutor {
                         sender.sendMessage(plugin.getMessageHandler().getDoesntExistMessage());
                         return true;
                     }
-                    plugin.getConfig().set("Settings.xRayBlocks", plugin.getData().keySet());
+                    ArrayList<String> blocks = new ArrayList<>(plugin.getData().keySet());
+                    blocks.remove(materialName);
+                    plugin.getConfig().set("Settings.xRayBlocks", blocks);
                     plugin.saveConfig();
                     plugin.initializeConfig();
                     sender.sendMessage(plugin.getMessageHandler().getRemovedBlockMessage());
