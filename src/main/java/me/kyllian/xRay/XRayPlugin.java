@@ -65,7 +65,7 @@ public class XRayPlugin extends JavaPlugin {
         saveDefaultConfig();
 
 
-        HashMap<String, WrappedBlockData> tempData = new HashMap<>();
+        Map<String, WrappedBlockData> tempData = new HashMap<>();
         for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
             tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
         }
