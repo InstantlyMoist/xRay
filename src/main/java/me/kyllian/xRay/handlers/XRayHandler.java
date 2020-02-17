@@ -1,14 +1,10 @@
 package me.kyllian.xRay.handlers;
 import me.kyllian.xRay.XRayPlugin;
-import me.kyllian.xRay.utils.BlockTask;
-import me.kyllian.xRay.utils.ChunkTask;
+import me.kyllian.xRay.tasks.BlockTask;
+import me.kyllian.xRay.tasks.ChunkTask;
 import me.kyllian.xRay.utils.PlayerData;
 import me.kyllian.xRay.utils.TaskType;
-import org.bukkit.Chunk;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class XRayHandler {
 
@@ -23,13 +19,14 @@ public class XRayHandler {
         playerData.setTask(TaskType.valueOf(plugin.getConfig().getString("Settings.Mode")) == TaskType.CHUNK ? new ChunkTask(plugin, player) : new BlockTask(plugin, player));
     }
 
-    public void restoreAll(Player player) {
+    public void restore(Player player) {
         PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
-        boolean chunkList = false;
-        for (Object object : (List) playerData.getList()) {
-            if (object instanceof Chunk) chunkList = true;
+        if (playerData.getTask() instanceof ChunkTask) {
+            ChunkTask task = (ChunkTask) playerData.getTask();
+            task.restore(task.getRunningChunks());
+        } else {
+            BlockTask blockTask = (BlockTask) playerData.getTask();
+            blockTask.restore(blockTask.getRunningBlocks());
         }
-        if (chunkList) ((List<Chunk>) playerData.getList()).forEach(chunk -> player.getWorld().refreshChunk(chunk.getX(), chunk.getZ()));
-        else ((List<Block>)playerData.getList()).forEach(block -> player.sendBlockChange(block.getLocation(), block.getType(), block.getData()));
     }
 }

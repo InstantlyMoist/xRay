@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class CMD_xRay implements CommandExecutor {
@@ -32,9 +34,8 @@ public class CMD_xRay implements CommandExecutor {
                 PlayerData playerData = plugin.getPlayerHandler().getPlayerData(player);
                 if (playerData.inXray()) {
                     player.sendMessage(plugin.getMessageHandler().getDisabledxRayMessage());
-                    plugin.getxRayHandler().restoreAll(player);
+                    plugin.getxRayHandler().restore(player);
                     playerData.setTask(null);
-                    playerData.setList(null);
                     return true;
                 }
                 player.sendMessage(plugin.getMessageHandler().getEnabledxRayMessage());
@@ -55,7 +56,7 @@ public class CMD_xRay implements CommandExecutor {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("xray.reload")) {
                     plugin.reloadConfig();
-                    plugin.blocks = new HashSet<>(plugin.getConfig().getStringList("Settings.xRayBlocks"));
+                    plugin.initializeConfig();
                     sender.sendMessage(plugin.getMessageHandler().getReloadedMessage());
                     return true;
                 }
@@ -71,13 +72,15 @@ public class CMD_xRay implements CommandExecutor {
                         sender.sendMessage(plugin.getMessageHandler().getUnknownBlockMessage());
                         return true;
                     }
-                    if (plugin.blocks.contains(materialName)) {
+                    if (plugin.getData().keySet().contains(materialName)) {
                         sender.sendMessage(plugin.getMessageHandler().getAlreadyAddedMessage());
                         return true;
                     }
-                    plugin.blocks.add(materialName);
-                    plugin.getConfig().set("Settings.xRayBlocks", plugin.blocks);
+                    ArrayList<String> blocks = new ArrayList<>(plugin.getData().keySet());
+                    blocks.add(materialName);
+                    plugin.getConfig().set("Settings.xRayBlocks", blocks);
                     plugin.saveConfig();
+                    plugin.initializeConfig();
                     sender.sendMessage(plugin.getMessageHandler().getAddedBlockMessage());
                     return true;
                 }
@@ -91,13 +94,15 @@ public class CMD_xRay implements CommandExecutor {
                         sender.sendMessage(plugin.getMessageHandler().getUnknownBlockMessage());
                         return true;
                     }
-                    if (!plugin.blocks.contains(materialName)) {
+                    if (!plugin.getData().keySet().contains(materialName)) {
                         sender.sendMessage(plugin.getMessageHandler().getDoesntExistMessage());
                         return true;
                     }
-                    plugin.blocks.remove(materialName);
-                    plugin.getConfig().set("Settings.xRayBlocks", plugin.blocks);
+                    ArrayList<String> blocks = new ArrayList<>(plugin.getData().keySet());
+                    blocks.remove(materialName);
+                    plugin.getConfig().set("Settings.xRayBlocks", blocks);
                     plugin.saveConfig();
+                    plugin.initializeConfig();
                     sender.sendMessage(plugin.getMessageHandler().getRemovedBlockMessage());
                     return true;
                 }
