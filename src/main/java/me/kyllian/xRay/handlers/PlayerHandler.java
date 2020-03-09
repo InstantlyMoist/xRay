@@ -1,7 +1,7 @@
 package me.kyllian.xRay.handlers;
 
 import me.kyllian.xRay.XRayPlugin;
-import me.kyllian.xRay.utils.PlayerData;
+import me.kyllian.xRay.player.PlayerData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

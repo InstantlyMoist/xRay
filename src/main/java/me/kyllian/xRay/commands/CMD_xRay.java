@@ -1,19 +1,14 @@
 package me.kyllian.xRay.commands;
 
 import me.kyllian.xRay.XRayPlugin;
-import me.kyllian.xRay.utils.PlayerData;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.kyllian.xRay.player.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class CMD_xRay implements CommandExecutor {
 
