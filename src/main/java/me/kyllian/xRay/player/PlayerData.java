@@ -1,4 +1,4 @@
-package me.kyllian.xRay.utils;
+package me.kyllian.xRay.player;
 
 import me.kyllian.xRay.tasks.Task;
 

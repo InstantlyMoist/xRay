@@ -1,16 +1,15 @@
 package me.kyllian.xRay.tasks;
 
-import me.kyllian.xRay.utils.TaskType;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Task extends Thread {
+public interface Task {
 
-    private TaskType taskType;
+    void send();
+    void restore(List<?> toRestore);
+    void update();
 
-    public Task(TaskType taskType) {
-        this.taskType = taskType;
-    }
+    TaskType getType();
+    ArrayList<?> getRunning();
 
-    public TaskType getTaskType() {
-        return taskType;
-    }
 }

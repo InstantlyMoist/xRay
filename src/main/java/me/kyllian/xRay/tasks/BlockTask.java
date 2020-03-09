@@ -1,16 +1,15 @@
 package me.kyllian.xRay.tasks;
 
 import me.kyllian.xRay.XRayPlugin;
-import me.kyllian.xRay.utils.TaskType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class BlockTask extends Task {
+public class BlockTask implements Task {
 
     private XRayPlugin plugin;
     private Player player;
@@ -18,49 +17,45 @@ public class BlockTask extends Task {
     private ArrayList<Block> runningBlocks;
 
     public BlockTask(XRayPlugin plugin, Player player) {
-        super(TaskType.BLOCK);
         this.plugin = plugin;
         this.player = player;
 
-        prepare();
-        start();
+        runningBlocks = new ArrayList<>();
+        update();
     }
 
-    public void run() {
-        throwXray();
-    }
-
-    public void throwXray() {
+    @Override
+    public void send() {
         for (Block runningBlock : runningBlocks) {
             if (!plugin.getData().keySet().contains(runningBlock.getType().toString()))
                 player.sendBlockChange(runningBlock.getLocation(), Material.BARRIER, (byte) 1);
         }
     }
 
-    public void prepare() {
-        runningBlocks = getRunningBlocks();
-    }
-
-    public void update() {
-        new BukkitRunnable() {
-            public void run() {
-                ArrayList<Block> newBlocks = getRunningBlocks();
-                ArrayList<Block> oldBlocks = (ArrayList<Block>) runningBlocks.clone();
-                oldBlocks.removeAll(newBlocks);
-                restore(oldBlocks);
-                runningBlocks = newBlocks;
-                throwXray();
-            }
-        }.runTaskLaterAsynchronously(plugin, 1);
-    }
-
-    public void restore(ArrayList<Block> restoring) {
-        for (Block block : restoring) {
+    @Override
+    public void restore(List<?> toRestore) {
+        for (Object object : toRestore) {
+            Block block = (Block) object;
             player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
         }
     }
 
-    public ArrayList<Block> getRunningBlocks() {
+    @Override
+    public void update() {
+        ArrayList<Block> newBlocks = (ArrayList<Block>) getRunning();
+        ArrayList<Block> oldBlocks = (ArrayList<Block>) runningBlocks.clone();
+        oldBlocks.removeAll(newBlocks);
+        restore(oldBlocks);
+        runningBlocks = newBlocks;
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.BLOCK;
+    }
+
+    @Override
+    public ArrayList<?> getRunning() {
         ArrayList newBlocks = new ArrayList<>();
         Location location = player.getLocation();
         int beforeRange = plugin.getConfig().getInt("Settings.Range");
