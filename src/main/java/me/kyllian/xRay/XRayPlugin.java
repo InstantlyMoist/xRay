@@ -65,7 +65,8 @@ public class XRayPlugin extends JavaPlugin {
 
         Map<String, WrappedBlockData> tempData = new HashMap<>();
         for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
-            tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
+            if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7")) tempData.put(block, WrappedBlockData.createData(Material.valueOf(block), 1));
+            else tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
         }
         data = Collections.unmodifiableMap(tempData);
     }
