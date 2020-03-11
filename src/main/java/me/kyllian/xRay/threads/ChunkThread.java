@@ -26,8 +26,9 @@ public class ChunkThread extends Thread {
         this.plugin = plugin;
         this.chunk = chunk;
         this.player = player;
-        barrierBlock = WrappedBlockData.createData(Material.BARRIER);
-        airBlock = WrappedBlockData.createData(Material.AIR);
+        boolean old = Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7");
+        barrierBlock = old ? WrappedBlockData.createData(Material.BARRIER, 1) : WrappedBlockData.createData(Material.BARRIER);
+        airBlock =  old ? WrappedBlockData.createData(Material.AIR, 1) : WrappedBlockData.createData(Material.AIR);
     }
 
     public void startTask() {
