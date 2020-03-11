@@ -7,6 +7,7 @@ import me.kyllian.xRay.handlers.PlayerHandler;
 import me.kyllian.xRay.handlers.XRayHandler;
 import me.kyllian.xRay.listeners.PlayerMoveListener;
 import me.kyllian.xRay.listeners.PlayerQuitListener;
+import me.kyllian.xRay.tasks.TaskType;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,9 +27,12 @@ public class XRayPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
-            Bukkit.getLogger().warning("xRay has been disabled, please download Protocollib!");
-            Bukkit.getPluginManager().disablePlugin(this);
+        initializeConfig();
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null &&
+                TaskType.valueOf(getConfig().getString("Settings.Mode")) == TaskType.CHUNK) {
+            Bukkit.getLogger().warning("ProtocolLib not found, changing mode to BLOCK");
+            getConfig().set("Settings.Mode", "BLOCK");
+            saveConfig();
             return;
         }
 
@@ -38,7 +42,7 @@ public class XRayPlugin extends JavaPlugin {
 
         initializeHandlers();
         initializeListeners();
-        initializeConfig();
+
     }
 
     @Override
@@ -65,7 +69,9 @@ public class XRayPlugin extends JavaPlugin {
 
         Map<String, WrappedBlockData> tempData = new HashMap<>();
         for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
-            tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
+            if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7"))
+                tempData.put(block, WrappedBlockData.createData(Material.valueOf(block), 1));
+            else tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
         }
         data = Collections.unmodifiableMap(tempData);
     }
