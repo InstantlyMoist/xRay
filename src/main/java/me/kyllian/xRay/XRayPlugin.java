@@ -65,11 +65,9 @@ public class XRayPlugin extends JavaPlugin {
     public void initializeConfig() {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
-
-
         Map<String, WrappedBlockData> tempData = new HashMap<>();
         for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
-            if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7"))
+            if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7") || Bukkit.getVersion().contains("1.12") || Bukkit.getVersion().contains("1.11") || Bukkit.getVersion().contains("1.9"))
                 tempData.put(block, WrappedBlockData.createData(Material.valueOf(block), 1));
             else tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
         }
