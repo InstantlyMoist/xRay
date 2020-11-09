@@ -38,7 +38,7 @@ public class ChunkThread extends Thread {
     }
 
     public void startTask() {
-        if (Bukkit.getVersion().contains("1.16.2") || Bukkit.getVersion().contains("1.16.3")) {
+        if (Bukkit.getVersion().contains("1.16.2") || Bukkit.getVersion().contains("1.16.3") || Bukkit.getVersion().contains("1.16.4")) {
             startTaskWithNewPackets(); // Yeah.. this should do the job
             return;
         }

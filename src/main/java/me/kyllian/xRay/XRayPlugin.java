@@ -36,7 +36,7 @@ public class XRayPlugin extends JavaPlugin {
             return;
         }
 
-        Metrics metrics = new Metrics(this);
+        Metrics metrics = new Metrics(this, 1000);
 
         getCommand("xray").setExecutor(new CMD_xRay(this));
 
