@@ -85,8 +85,8 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>cglib-nodep</artifactId>
-          <groupId>cglib</groupId>
+          <artifactId>byte-buddy</artifactId>
+          <groupId>net.bytebuddy</groupId>
         </exclusion>
       </exclusions>
     </dependency>
