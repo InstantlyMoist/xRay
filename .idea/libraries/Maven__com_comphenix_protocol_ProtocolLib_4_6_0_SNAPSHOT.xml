@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: com.comphenix.protocol:ProtocolLib:4.6.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20201019.203729-21.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20210104.184252-29.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20201019.203729-21-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20210104.184252-29-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20201019.203729-21-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.6.0-SNAPSHOT/ProtocolLib-4.6.0-20210104.184252-29-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
