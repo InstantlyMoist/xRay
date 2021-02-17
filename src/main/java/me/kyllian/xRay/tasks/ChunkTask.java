@@ -27,21 +27,22 @@ public class ChunkTask implements Task {
 
     @Override
     public void send() {
-        runningChunks.forEach(chunk -> new ChunkThread(plugin, chunk, player).startTask());
+        runningChunks.forEach(chunk -> new ChunkThread(plugin, chunk, player).startTask(false));
     }
 
     @Override
     public void restore(List<?> toRestore) {
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (Object object : toRestore) {
                     Chunk chunk = (Chunk) object;
-                    player.getWorld().unloadChunk(chunk);
-                    player.getWorld().loadChunk(chunk);
+                    new ChunkThread(plugin, chunk, player).startTask(true);
                 }
             }
         }.runTask(plugin);
+
     }
 
     @Override

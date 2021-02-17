@@ -30,16 +30,18 @@ public class ChunkThread extends Thread {
         this.plugin = plugin;
         this.chunk = chunk;
         this.player = player;
-        boolean old = Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7");
-        barrierBlock = old ? WrappedBlockData.createData(Material.BARRIER, 1) : WrappedBlockData.createData(Material.BARRIER);
-        airBlock = old ? WrappedBlockData.createData(Material.AIR, 1) : WrappedBlockData.createData(Material.AIR);
+        //boolean old = Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7");
+        barrierBlock = WrappedBlockData.createData(Material.BARRIER);
+        airBlock = WrappedBlockData.createData(Material.AIR);
+        //barrierBlock = old ? WrappedBlockData.createData(Material.BARRIER, 1) : WrappedBlockData.createData(Material.BARRIER);
+        //airBlock = old ? WrappedBlockData.createData(Material.AIR, 1) : WrappedBlockData.createData(Material.AIR);
 
         snapshot = chunk.getChunkSnapshot();
     }
 
-    public void startTask() {
-        if (Bukkit.getVersion().contains("1.16.2") || Bukkit.getVersion().contains("1.16.3")) {
-            startTaskWithNewPackets(); // Yeah.. this should do the job
+    public void startTask(boolean reverse) {
+        if (Bukkit.getVersion().contains("1.16.2") || Bukkit.getVersion().contains("1.16.3") || Bukkit.getVersion().contains("1.16.4") || Bukkit.getVersion().contains("1.16.5")) {
+            startTaskWithNewPackets(reverse); // Yeah.. this should do the job
             return;
         }
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
@@ -51,8 +53,9 @@ public class ChunkThread extends Thread {
                 for (int z = 0; z <= 15; z++) {
                     Block foundBlock = chunk.getBlock(x, y, z);
                     Location location = foundBlock.getLocation();
-                    String foundMaterial = snapshot.getBlockType(x, y, z).toString();
-                    change[i++] = new MultiBlockChangeInfo(location, plugin.getData().getOrDefault(foundMaterial, barrierBlock));
+                    String foundMaterial = chunk.getBlock(x, y, z).getType().toString();
+                    WrappedBlockData foundWrappedBlockData = reverse ? getFromMaterial(foundMaterial, foundBlock.getData()) : plugin.getData().getOrDefault(foundMaterial, barrierBlock);
+                    change[i++] = new MultiBlockChangeInfo(location, foundWrappedBlockData);
                 }
             }
         }
@@ -65,11 +68,16 @@ public class ChunkThread extends Thread {
         }
     }
 
+    public WrappedBlockData getFromMaterial(String material, int data) {
+        return WrappedBlockData.createData(Material.valueOf(material), data);
+        /*if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7") || Bukkit.getVersion().contains("1.12") || Bukkit.getVersion().contains("1.11") || Bukkit.getVersion().contains("1.9"))
+            return WrappedBlockData.createData(Material.valueOf(material), 1);
+        else return WrappedBlockData.createData(Material.valueOf(material));*/
+    }
 
-    public void startTaskWithNewPackets() {
+    public void startTaskWithNewPackets(boolean reverse) {
         for (int i = 0; i <= 15; i++) {
             PacketContainer container = new PacketContainer(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
-            ArrayList<WrappedBlockData> reverseCache = new ArrayList<>();
             ArrayList<WrappedBlockData> wrappedBlockDataArrayList = new ArrayList<>();
             ArrayList<Short> shortArrayList = new ArrayList<>();
             container.getSectionPositions().write(0, new BlockPosition(chunk.getX(), i, chunk.getZ()));
@@ -78,8 +86,9 @@ public class ChunkThread extends Thread {
                 for (int y = newY; y <= newY + 15; y++) {
                     for (int z = 0; z <= 15; z++) {
                         Block foundBlock = chunk.getBlock(x, y, z);
-                        String foundMaterial = snapshot.getBlockType(x,  y, z).toString();
-                        wrappedBlockDataArrayList.add(plugin.getData().getOrDefault(foundMaterial, barrierBlock));
+                        Material foundMaterial = snapshot.getBlockType(x, y, z);
+                        WrappedBlockData foundWrappedBlockData = reverse ? getFromMaterial(foundMaterial.toString(), foundBlock.getData()) : plugin.getData().getOrDefault(foundMaterial.toString(), barrierBlock);
+                        wrappedBlockDataArrayList.add(foundWrappedBlockData);
                         shortArrayList.add(setShortLocation(foundBlock.getLocation()));
                     }
                 }

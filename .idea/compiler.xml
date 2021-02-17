@@ -2,15 +2,15 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+      <profile name="Annotation profile for xRay" enabled="true">
+        <sourceOutputDir name="server/plugins/temp/generated-sources/annotations" />
+        <sourceTestOutputDir name="server/plugins/temp/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="xRay" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="xRay" target="1.8" />
+      <module name="xRay" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
