@@ -62,7 +62,7 @@ public class CMD_xRay implements CommandExecutor {
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("add")) {
                 if (sender.hasPermission("xray.edit")) {
-                    String materialName = args[1];
+                    String materialName = args[1].toUpperCase();
                     if (Material.valueOf(materialName) == null) {
                         sender.sendMessage(plugin.getMessageHandler().getUnknownBlockMessage());
                         return true;
@@ -84,7 +84,7 @@ public class CMD_xRay implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("remove")) {
                 if (sender.hasPermission("xray.edit")) {
-                    String materialName = args[1];
+                    String materialName = args[1].toUpperCase();
                     if (Material.valueOf(materialName) == null) {
                         sender.sendMessage(plugin.getMessageHandler().getUnknownBlockMessage());
                         return true;
