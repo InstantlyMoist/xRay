@@ -40,7 +40,9 @@ public class ChunkThread extends Thread {
     }
 
     public void startTask(boolean reverse) {
-        if (Bukkit.getVersion().contains("1.16.2") || Bukkit.getVersion().contains("1.16.3") || Bukkit.getVersion().contains("1.16.4") || Bukkit.getVersion().contains("1.16.5")) {
+        String minecraftVersion = Bukkit.getVersion();
+        int mainVer = Integer.parseInt(minecraftVersion.split("\\.")[1]);
+        if (mainVer > 16) {
             startTaskWithNewPackets(reverse); // Yeah.. this should do the job
             return;
         }
