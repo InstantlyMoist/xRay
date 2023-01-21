@@ -34,6 +34,12 @@ public class XRayPlugin extends JavaPlugin {
             getConfig().set("Settings.Mode", "BLOCK");
             saveConfig();
             return;
+        } else {
+            Map<String, WrappedBlockData> tempData = new HashMap<>();
+            for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
+                tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
+            }
+            data = Collections.unmodifiableMap(tempData);
         }
 
         Metrics metrics = new Metrics(this, 1000);
@@ -47,7 +53,8 @@ public class XRayPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).inXray()).forEach(xRayHandler::restore);
+        Bukkit.getOnlinePlayers().stream().filter(player -> playerHandler.getPlayerData(player).inXray())
+                .forEach(xRayHandler::restore);
     }
 
     public void initializeHandlers() {
@@ -65,14 +72,7 @@ public class XRayPlugin extends JavaPlugin {
     public void initializeConfig() {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
-        Map<String, WrappedBlockData> tempData = new HashMap<>();
-        for (String block : getConfig().getStringList("Settings.xRayBlocks")) {
-            tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));
-            /*if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7") || Bukkit.getVersion().contains("1.12") || Bukkit.getVersion().contains("1.11") || Bukkit.getVersion().contains("1.9"))
-                tempData.put(block, WrappedBlockData.createData(Material.valueOf(block), 1));
-            else tempData.put(block, WrappedBlockData.createData(Material.valueOf(block)));*/
-        }
-        data = Collections.unmodifiableMap(tempData);
+
     }
 
     public Map<String, WrappedBlockData> getData() {

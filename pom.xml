@@ -6,7 +6,7 @@
 
     <groupId>me.kyllian.xRay</groupId>
     <artifactId>xRay</artifactId>
-    <version>3.26</version>
+    <version>3.30</version>
 
     <packaging>jar</packaging>
     <build>
@@ -52,6 +52,8 @@
         </plugins>
     </build>
 
+    
+
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -72,21 +74,27 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--bStats API-->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.7</version>
+            <version>3.0.0</version>
             <scope>compile</scope>
-        </dependency>
+          </dependency>
         <!--ProtocolLib API-->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.8.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
